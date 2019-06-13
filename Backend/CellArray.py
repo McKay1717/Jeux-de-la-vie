@@ -1,54 +1,53 @@
 from __builtin__ import type
-from math import sqrt
-
+from random import randint
 
 class CellArray:
-    def __init__(self, number_of_cell):
+    def __init__(self, row_size):
         # Main array of cell, true = white, false=black
         self.__cell_array = []
-        self.__len_of_cell_array = 0
-        self.__row_size = 0
+        self.__row_size = row_size
         try:
-            self.__InitArray(number_of_cell)
+            self.__InitArray(row_size)
         except Exception as v:
             raise v
 
+    # Fill line with True and add it to main array
+    def StartNextIteration(self):
+        self.__cell_array.append(self.__InitLine())
+
+    # Get size of line
     def GetRowSize(self):
         return self.__row_size
 
-    def __ComputeRowSize(self, number_of_cell):
-        if type(number_of_cell) is not int:
-            raise TypeError(str(number_of_cell) + 'is not a integer')
+    # Return the ID of current iteration
+    def GetCurrentIterID(self):
+        return len(self.__cell_array)
 
-        row_size = sqrt(number_of_cell)
-        # Test if int cast is safe
-        if row_size % 1 != 0:
-            raise ValueError('Can\'t make a square with this number of cell :' + str(number_of_cell))
+    # Fill a line with True and return it
+    def __InitLine(self):
+        y_array = []
+        for x in range(0, self.GetRowSize()):
+            y_array.append(True)
+        return y_array
 
-        row_size = int(row_size)
-        self.__row_size = row_size
-        return row_size
-
-    def __InitArray(self, number_of_cell):
-        try:
-            row_size = self.__ComputeRowSize(number_of_cell)
-        except ValueError as v:
-            raise v
+    # Check if input is good and init the first line with a black pixel
+    def __InitArray(self, row_size):
+        if type(row_size) is not int:
+            raise TypeError(str(row_size) + 'is not a integer')
         # Init whole tab to white
-        for x in range(0, row_size):
-            y_array = []
-            for y in range(0, row_size):
-                y_array.append(True)
-            self.__cell_array.append(y_array)
-            self.__len_of_cell_array = number_of_cell
+        y_array = self.__InitLine()
+        self.__cell_array.append(y_array)
+        self.__cell_array[0][randint(0, row_size - 1)] = False
 
-    def GetCell(self, x, y):
+    # Return the boolean for the iterd_id at the postion y
+    def GetCell(self, iterd_id, y):
         try:
-            current_cell = self.__cell_array[x][y]
+            current_cell = self.__cell_array[iterd_id][y]
         except Exception as e:
             raise e
         return current_cell
 
+    # Set the boolean for the iterd_id at the postion y
     def SetCell(self, x, y, state):
         if type(state) != bool:
             raise TypeError('Je veux un boolean putain !')
@@ -57,8 +56,9 @@ class CellArray:
         except Exception as e:
             raise e
 
+    # Iterate over the line of the current iteration
     def __iter__(self):
-        self.__x = 0
+        self.__x = self.GetCurrentIterID()-1
         self.__y = 0
         return self
 
@@ -66,14 +66,9 @@ class CellArray:
         row_size = self.GetRowSize() - 1
 
         cell = self.GetCell(self.__x, self.__y)
-        if self.__x == row_size and self.__y == row_size:
+        if self.__y == row_size:
             raise StopIteration
             return cell
-
-        if self.__x >= row_size:
-            self.__y += 1
-            self.__x = 0
         else:
-            self.__x += 1
-
+            self.__y += 1
         return cell
