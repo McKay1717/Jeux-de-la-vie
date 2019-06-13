@@ -1,4 +1,8 @@
 from CellArray import CellArray
 
-cell = CellArray()
-cell.InitArray(64)
+cell = CellArray(64)
+i = 0
+for a in cell:
+    print(i)
+    i += 1
+    print(a)
