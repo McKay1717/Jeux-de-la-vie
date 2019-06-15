@@ -30,6 +30,7 @@ class Ui(QtWidgets.QDialog):
         check6 = self.findChild(QtWidgets.QCheckBox, "check6")
         check7 = self.findChild(QtWidgets.QCheckBox, "check7")
         check8 = self.findChild(QtWidgets.QCheckBox, "check8")
+        check9 = self.findChild(QtWidgets.QCheckBox, "check9")
 
         btn_screen.setEnabled(False)
         btn_pause.setEnabled(False)
