@@ -24,7 +24,6 @@ class Ui(QtWidgets.QDialog):
         btn_screen = self.findChild(QtWidgets.QPushButton, "btn_screen")
         cbb_regle = self.findChild(QtWidgets.QComboBox,"cbb_regle")
         graphic = self.findChild(QtWidgets.QGraphicsView, "graphic")
-        txt_temps= self.findChild(QtWidgets.QLineEdit, "txt_temps")
         check1 = self.findChild(QtWidgets.QCheckBox, "check1")
         check2 = self.findChild(QtWidgets.QCheckBox, "check2")
         check3 = self.findChild(QtWidgets.QCheckBox, "check3")
@@ -50,6 +49,9 @@ class Ui(QtWidgets.QDialog):
         scene.addWidget(cont)
         graphic.setScene(scene)
 
+        img = QPixmap("../Interface/regle254_600.png")
+        pixmap_scaled
+
 
 def resizeMatrice():
     global line, matrix
@@ -58,6 +60,7 @@ def resizeMatrice():
         matrix[i].append(0)
         matrix[i].insert(0, 0)
     return matrix
+
 
 def matrice(taille):
     global line, column, matrix
@@ -88,7 +91,7 @@ def matrice(taille):
 
 def etape(self, timer):
     global Row, Size, line, column
-    taille = self.findChild(QtWidgets.QLineEdit, "txt_nbexec")
+    taille = self.findChild(QtWidgets.QSpinBox, "sp_nbexec")
     int_taille = int(taille.text())
     matrix = matrice(int_taille)
 
@@ -117,8 +120,6 @@ def etape(self, timer):
             print(' ', matrix[i][j], end='')
         print('')
 
-
-
     pixmap = QPixmap(img)
     pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
     cont = QtWidgets.QLabel()
@@ -141,7 +142,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Ui()
 
-    txt_exec = window.findChild(QtWidgets.QLineEdit, "txt_exec")
+    txt_exec = window.findChild(QtWidgets.QSpinBox, "sp_nbexec")
     btn_start = window.findChild(QtWidgets.QPushButton, "btn_start")
     btn_exit = window.findChild(QtWidgets.QPushButton, "btn_exit")
 
