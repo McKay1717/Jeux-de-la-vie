@@ -19,7 +19,7 @@ class Rule:
         return self.__rule[0]
 
     def __SetColor(self, color, pos):
-        if type(color) is not int
+        if type(color) is not int:
             raise TypeError('Only Int is allowed')
         elif color not in [0,1,-1]:
             raise ValueError('Only 0, 1 or -1 is allowed')
