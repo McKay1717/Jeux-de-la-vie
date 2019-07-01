@@ -1,3 +1,4 @@
+
 class Rule:
     def __init__(self, rule_type, b1, b2 ,b3):
         __rule = [False,-1,-1,-1]
@@ -9,8 +10,8 @@ class Rule:
         except Exception as e:
             raise e
 
-    def SetRuleType(self, type):
-        if type(type) is not bool:
+    def SetRuleType(self, inputType):
+        if type(inputType) is not bool:
             raise TypeError('Only Boolean is allowed')
         else:
             self.__rule[0] = type
@@ -19,7 +20,7 @@ class Rule:
         return self.__rule[0]
 
     def __SetColor(self, color, pos):
-        if type(color) is not int
+        if not isinstance(color, int):
             raise TypeError('Only Int is allowed')
         elif color not in [0,1,-1]:
             raise ValueError('Only 0, 1 or -1 is allowed')
