@@ -18,7 +18,7 @@ rules = RulesCollection(rules)
 
 engine = Backend(rules, cells)
 
-for i in range(0,100):
+for i in range(0, 100):
     line = []
     cells = engine.getCellArray()
     for e in cells:

@@ -1,16 +1,20 @@
 import time
 
-from PyQt5 import uic, QtWidgets, QtCore, QtGui, Qt
+from PyQt5 import uic, QtWidgets, QtCore, Qt
 
 import sys
 
-from PyQt5.QtGui import QPixmap, QImage, QPalette, QColor, QPainter
+from PyQt5.QtGui import QPixmap, QImage
 
-import matplotlib.image as mpimg
 from PyQt5.QtWidgets import QFileDialog
 
+from Backend.CellArray import CellArray
+from Backend.backend import Backend
+from Backend.rule import Rule
+from Backend.rulesCollection import RulesCollection
+
 Row = 0
-line = 1
+line = 0
 column = 2
 
 current_exec = -1
@@ -18,9 +22,6 @@ tStart = 0
 isExec = False
 isTime = False
 
-matrix = [[] for i in range(2)]
-matrix[0] = [0, 1, 0]
-matrix[1] = [1, 0, 1]
 
 
 class Ui(QtWidgets.QDialog):
@@ -40,7 +41,7 @@ class Ui(QtWidgets.QDialog):
         img = QImage(10, 10, QImage.Format_Mono)
         for i in range(img.height()):
             for j in range(img.height()):
-                img.setPixel(i, j, 0)
+                img.setPixel(i, j, 1)
         pixmap = QPixmap(img)
         pixmap_scaled = pixmap.scaled(graphic.width()-5, graphic.height()-5, QtCore.Qt.IgnoreAspectRatio)
         cont = QtWidgets.QLabel()
@@ -185,26 +186,26 @@ def resizeMatrice():
     return matrix
 
 
-def matrice():
-    global line, column, matrix
-    matrix[line].append(0)
-    matrix[line].insert(0,0)
+def matrice(engine, nb_exec, taille):
 
-    resizeMatrice()
+    Line = []
+    matrix = []
+    cells = engine.getCellArray()
+    for i in range(nb_exec):
+        for e in cells:
+            if e:
+                Line.append(1)
+            else:
+                Line.append(0)
+        matrix.append(Line)
+        Line = []
+        engine.tick()
+    print(matrix)
 
-    newLine = []
-    for i in range(len(matrix[line])):
-        if matrix[line][i] == 0:
-            newLine.append(1)
-        else:
-            newLine.append(0)
-    matrix.append(newLine)
-    line = line + 1
-    column = column + 1
     return matrix
 
 
-def etape(self, timer):
+def etape(self, timer, engine, matrix):
     global Row, line, column, current_exec, tStart
 
     sp_exec = self.findChild(QtWidgets.QSpinBox, "sp_nbexec")
@@ -213,19 +214,22 @@ def etape(self, timer):
     nb_temps = sp_temps.value()
 
     total_exec = nb_exec
-    matrix = matrice()
     current_exec += 1
 
     print('Exec total = ' + str(total_exec) + ' | current  = ' + str(current_exec) + ' | time = ' + str(time.time() - tStart))
 
     if isExec and current_exec >= total_exec:
         timer.stop()
+        del timer
+        del matrix
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(current_exec) + " itérations effectuées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
         return
 
     if isTime and (time.time() - tStart) > nb_temps:
         timer.stop()
+        del timer
+        del matrix
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(nb_temps) + " secondes écoulées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
         return
@@ -234,12 +238,12 @@ def etape(self, timer):
     scene = QtWidgets.QGraphicsScene()
     img = QImage(len(matrix[0]), line-1, QImage.Format_Mono)
 
-    for i in range(line-1):
-        for j in range(len(matrix[0])):
+    for i in range(line):
+        for j in range(len(matrix[i])):
             if matrix[i][j] == 1:
-                img.setPixel(j, i, 1)
-            else:
                 img.setPixel(j, i, 0)
+            else:
+                img.setPixel(j, i, 1)
 
     pixmap = QPixmap(img)
     pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
@@ -248,23 +252,22 @@ def etape(self, timer):
     cont.setPixmap(pixmap_scaled)
     scene.addWidget(cont)
     graphic.setScene(scene)
-    Row = Row + 1
+    line = line + 1
 
 
 def resetvar():
-    global tStart, current_exec, matrix, Row, line, column
+    global tStart, current_exec, Row, line, column
     column = 2
     line = 1
     Row = 0
     current_exec = -1
-    matrix = [[] for i in range(2)]
-    matrix[0] = [0, 1, 0]
-    matrix[1] = [1, 0, 1]
+    matrix = []
     tStart = time.time()
 
 
-def start(self, timer):
-    if isTime == False and isExec == False:
+def start(self):
+    sp_taille = self.findChild(QtWidgets.QSpinBox, "sp_taille")
+    if (isTime == False and isExec == False) or sp_taille.value() == 0:
         popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",  " Vous devez choisir un nombre d'éxécution ou une durée", QtWidgets.QMessageBox.Ok)
         return
     resetvar()
@@ -279,9 +282,34 @@ def start(self, timer):
     check6 = self.findChild(QtWidgets.QCheckBox, "check6")
     check7 = self.findChild(QtWidgets.QCheckBox, "check7")
     check8 = self.findChild(QtWidgets.QCheckBox, "check8")
-    regle = {"111": int(check1.isChecked()), "110": int(check2.isChecked()), "101": int(check3.isChecked()), "100": int(check4.isChecked()), "011": int(check5.isChecked()), "010": int(check6.isChecked()), "001": int(check7.isChecked()), "000": int(check8.isChecked())}
+    rule1 = Rule(False, 0, 0, 0)
+    rule2 = Rule(False, 0, 0, 1)
+    rule3 = Rule(False, 0, 1, 0)
+    rule4 = Rule(False, 0, 1, 1)
+    rule5 = Rule(False, 1, 0, 0)
+    rule6 = Rule(False, 1, 0, 1)
+    rule7 = Rule(False, 1, 1, 0)
+    rule8 = Rule(False, 1, 1, 1)
+    rules = {rule1: not check1.isChecked(), rule2: not check2.isChecked(), rule3: not check3.isChecked(), rule4: not check4.isChecked(), rule5: not check5.isChecked(), rule6: not check6.isChecked(), rule7: not check7.isChecked(), rule8: not check8.isChecked()}
+
+    cells = CellArray(sp_taille.value())
+    rules = RulesCollection(rules)
+    engine = Backend(rules, cells)
+
+    sp_exec = self.findChild(QtWidgets.QSpinBox, "sp_nbexec")
+    sp_temps = self.findChild(QtWidgets.QSpinBox, "sp_temps")
+    nb_exec = sp_exec.value()
+    nb_temps = sp_temps.value()
+
+    total_exec = nb_exec
+    matrix = matrice(engine, total_exec, sp_taille.value())
+
+    timer = QtCore.QTimer()
+    timer.timeout.connect(lambda: etape(self, timer, engine, matrix))
+
     timer.setInterval(100)
     timer.start()
+    btn_pause.pressed.connect(lambda: pause(timer, window))
 
 
 def StateSpinExec(self):
@@ -333,7 +361,6 @@ def save(self):
         popup = QtWidgets.QMessageBox().information(self, "Sauvegarde effectuée",  "La règle a été sauvegardée avec succés", QtWidgets.QMessageBox.Ok)
 
 
-
 def pause(timer, self):
     btn_screen = self.findChild(QtWidgets.QPushButton, "btn_screen")
     if timer.isActive():
@@ -375,13 +402,9 @@ if __name__ == '__main__':
     radioButtonTemps = window.findChild(QtWidgets.QRadioButton, "rb_is_time")
     radioButtonTemps.toggled.connect(lambda: StateSpinTemps(window))
 
-    timer = QtCore.QTimer()
-    timer.timeout.connect(lambda: etape(window, timer))
-
-    btn_start.pressed.connect(lambda: start(window, timer))
+    btn_start.pressed.connect(lambda: start(window))
     btn_save.pressed.connect(lambda: save(window))
     btn_exit.pressed.connect(app.quit)
-    btn_pause.pressed.connect(lambda: pause(timer, window))
     btn_screen.pressed.connect(lambda: screen(window))
 
     sys.exit(app.exec_())
