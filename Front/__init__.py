@@ -33,6 +33,7 @@ class Ui(QtWidgets.QMainWindow):
         btn_screen = self.findChild(QtWidgets.QPushButton, "btn_screen")
         graphic = self.findChild(QtWidgets.QGraphicsView, "graphic")
 
+
         btn_screen.setEnabled(False)
         btn_pause.setEnabled(False)
 
@@ -223,7 +224,7 @@ def matrice(engine, nb_exec, code, matrix):
 
 def etape(self, timer, engine, matrix):
     global Row, line, column, current_exec, tStart
-
+    form = self.findChild(QtWidgets.QFrame, "form")
     sp_exec = self.findChild(QtWidgets.QSpinBox, "sp_nbexec")
     sp_temps = self.findChild(QtWidgets.QSpinBox, "sp_temps")
     nb_exec = sp_exec.value()
@@ -243,6 +244,7 @@ def etape(self, timer, engine, matrix):
         timer.disconnect()
         del timer
         del matrix
+        form.setEnabled(True)
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution",
                                                     str(current_exec) + " itérations effectuées. Simulation terminée.",
                                                     QtWidgets.QMessageBox.Ok)
@@ -254,6 +256,7 @@ def etape(self, timer, engine, matrix):
         timer.stop()
         del timer
         del matrix
+        form.setEnabled(True)
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution",
                                                     str(nb_temps) + " secondes écoulées. Simulation terminée.",
                                                     QtWidgets.QMessageBox.Ok)
@@ -301,6 +304,8 @@ def resetvar():
 
 
 def start(self):
+    form = self.findChild(QtWidgets.QFrame, "form")
+    form.setEnabled(False)
     sp_taille = self.findChild(QtWidgets.QSpinBox, "sp_taille")
     if (isTime == False and isExec == False) or sp_taille.value() == 0:
         popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",
