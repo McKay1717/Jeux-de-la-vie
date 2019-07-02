@@ -407,9 +407,11 @@ def save(self):
 def pause(timer, self):
     btn_screen = self.findChild(QtWidgets.QPushButton, "btn_screen")
     if timer.isActive():
+        btn_pause.setText("Play")
         timer.stop()
         btn_screen.setEnabled(True)
     else:
+        btn_pause.setText("Pause")
         timer.start()
         btn_screen.setEnabled(False)
 
