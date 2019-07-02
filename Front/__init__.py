@@ -4,7 +4,7 @@ from PyQt5 import uic, QtWidgets, QtCore, Qt
 
 import sys
 
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QImage, QBrush
 
 from PyQt5.QtWidgets import QFileDialog
 
@@ -287,9 +287,10 @@ def etape(self, timer, engine, matrix):
 
     pixmap = QPixmap(img)
     pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
-    img = QImage(pixmap_scaled.toImage().convertToFormat(QImage.Format_ARGB32_Premultiplied))
-    scene.setBackgroundBrush(img);
-    scene.setCacheMode(QtWidgets.QGraphicsView.CacheBackground)
+    gr = QtWidgets.QGraphicsPixmapItem()
+    gr.setPixmap(pixmap_scaled)
+    scene.addItem(gr)
+    graphic.setScene(scene)
     line = line + 1
 
 
