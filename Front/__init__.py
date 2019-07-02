@@ -24,7 +24,7 @@ isTime = False
 
 
 
-class Ui(QtWidgets.QDialog):
+class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('../Interface/lp74.ui', self)
