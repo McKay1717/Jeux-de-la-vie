@@ -23,7 +23,6 @@ isExec = False
 isTime = False
 
 
-
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
@@ -43,7 +42,7 @@ class Ui(QtWidgets.QMainWindow):
             for j in range(img.height()):
                 img.setPixel(i, j, 1)
         pixmap = QPixmap(img)
-        pixmap_scaled = pixmap.scaled(graphic.width()-5, graphic.height()-5, QtCore.Qt.IgnoreAspectRatio)
+        pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
         cont = QtWidgets.QLabel()
         cont.setScaledContents(1)
         cont.setPixmap(pixmap_scaled)
@@ -52,7 +51,7 @@ class Ui(QtWidgets.QMainWindow):
 
         rules = self.findChild(QtWidgets.QGraphicsView, "regle")
         img_rules = QPixmap("../Interface/regle254_600.png")
-        img_scaled = img_rules.scaled(rules.width()-3, rules.height()-3, QtCore.Qt.IgnoreAspectRatio)
+        img_scaled = img_rules.scaled(rules.width() - 3, rules.height() - 3, QtCore.Qt.IgnoreAspectRatio)
         container = QtWidgets.QLabel()
         container.setScaledContents(1)
         container.setPixmap(img_scaled)
@@ -114,7 +113,6 @@ class Ui(QtWidgets.QMainWindow):
 
 
 def regles(self):
-
     check1 = self.findChild(QtWidgets.QCheckBox, "check1")
     check2 = self.findChild(QtWidgets.QCheckBox, "check2")
     check3 = self.findChild(QtWidgets.QCheckBox, "check3")
@@ -170,7 +168,7 @@ def regles(self):
 
 
 def state(i, self):
-    check = self.findChild(QtWidgets.QCheckBox, "check"+str(i))
+    check = self.findChild(QtWidgets.QCheckBox, "check" + str(i))
     if check.isChecked():
         check.setStyleSheet("QCheckBox::indicator {background-color: black}")
     else:
@@ -180,15 +178,14 @@ def state(i, self):
 def resizeMatrice():
     global line, matrix
 
-    for i in range(line-1):
+    for i in range(line - 1):
         matrix[i].append(0)
         matrix[i].insert(0, 0)
     return matrix
 
 
 def matrice(engine, nb_exec, code, matrix):
-
-    if code ==0:
+    if code == 0:
         Line = []
         matrix = []
         cells = engine.getCellArray()
@@ -232,14 +229,17 @@ def etape(self, timer, engine, matrix):
     if isTime:
         matrix = matrice(engine, 0, 1, matrix)
 
-    print('Exec total = ' + str(total_exec) + ' | current  = ' + str(current_exec) + ' | time = ' + str(time.time() - tStart))
+    print('Exec total = ' + str(total_exec) + ' | current  = ' + str(current_exec) + ' | time = ' + str(
+        time.time() - tStart))
 
     if isExec and current_exec >= total_exec:
         timer.stop()
         timer.disconnect()
         del timer
         del matrix
-        popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(current_exec) + " itérations effectuées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
+        popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution",
+                                                    str(current_exec) + " itérations effectuées. Simulation terminée.",
+                                                    QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
         btn_screen.setEnabled(True)
         return
@@ -248,14 +248,16 @@ def etape(self, timer, engine, matrix):
         timer.stop()
         del timer
         del matrix
-        popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(nb_temps) + " secondes écoulées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
+        popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution",
+                                                    str(nb_temps) + " secondes écoulées. Simulation terminée.",
+                                                    QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
         btn_screen.setEnabled(True)
         return
 
     graphic = self.findChild(QtWidgets.QGraphicsView, "graphic")
     scene = QtWidgets.QGraphicsScene()
-    img = QImage(len(matrix[0]), line-1, QImage.Format_Mono)
+    img = QImage(len(matrix[0]), line - 1, QImage.Format_Mono)
 
     if isExec:
         for i in range(line):
@@ -295,7 +297,9 @@ def resetvar():
 def start(self):
     sp_taille = self.findChild(QtWidgets.QSpinBox, "sp_taille")
     if (isTime == False and isExec == False) or sp_taille.value() == 0:
-        popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",  " Vous devez choisir un nombre d'éxécution ou une durée", QtWidgets.QMessageBox.Ok)
+        popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",
+                                                    " Vous devez choisir un nombre d'éxécution ou une durée",
+                                                    QtWidgets.QMessageBox.Ok)
         return
     resetvar()
     btn_start.setEnabled(False)
@@ -316,7 +320,9 @@ def start(self):
     rule6 = Rule(False, 1, 0, 1)
     rule7 = Rule(False, 1, 1, 0)
     rule8 = Rule(False, 1, 1, 1)
-    rules = {rule1: not check1.isChecked(), rule2: not check2.isChecked(), rule3: not check3.isChecked(), rule4: not check4.isChecked(), rule5: not check5.isChecked(), rule6: not check6.isChecked(), rule7: not check7.isChecked(), rule8: not check8.isChecked()}
+    rules = {rule1: not check1.isChecked(), rule2: not check2.isChecked(), rule3: not check3.isChecked(),
+             rule4: not check4.isChecked(), rule5: not check5.isChecked(), rule6: not check6.isChecked(),
+             rule7: not check7.isChecked(), rule8: not check8.isChecked()}
 
     cells = CellArray(sp_taille.value())
     rules = RulesCollection(rules)
@@ -330,7 +336,7 @@ def start(self):
     total_exec = nb_exec
     matrix = []
     if isExec:
-        matrix = matrice(engine, total_exec,0,matrix)
+        matrix = matrice(engine, total_exec, 0, matrix)
 
     timer = QtCore.QTimer()
     timer.timeout.connect(lambda: etape(self, timer, engine, matrix))
@@ -373,7 +379,9 @@ def save(self):
     check6 = self.findChild(QtWidgets.QCheckBox, "check6")
     check7 = self.findChild(QtWidgets.QCheckBox, "check7")
     check8 = self.findChild(QtWidgets.QCheckBox, "check8")
-    regle = {"111": int(check1.isChecked()), "110": int(check2.isChecked()), "101": int(check3.isChecked()), "100": int(check4.isChecked()), "011": int(check5.isChecked()), "010": int(check6.isChecked()), "001": int(check7.isChecked()), "000": int(check8.isChecked())}
+    regle = {"111": int(check1.isChecked()), "110": int(check2.isChecked()), "101": int(check3.isChecked()),
+             "100": int(check4.isChecked()), "011": int(check5.isChecked()), "010": int(check6.isChecked()),
+             "001": int(check7.isChecked()), "000": int(check8.isChecked())}
     text, popup = QtWidgets.QInputDialog.getText(self, 'Nom de la règle', 'Entrez le nom de la règle:')
     if popup:
         f = open("../Interface/regles.txt", "a")
@@ -386,7 +394,8 @@ def save(self):
         for x in f.readlines():
             splited = x.split(";")
             cbb_regle.addItem(splited[0], splited[1])
-        popup = QtWidgets.QMessageBox().information(self, "Sauvegarde effectuée",  "La règle a été sauvegardée avec succés", QtWidgets.QMessageBox.Ok)
+        popup = QtWidgets.QMessageBox().information(self, "Sauvegarde effectuée",
+                                                    "La règle a été sauvegardée avec succés", QtWidgets.QMessageBox.Ok)
 
 
 def pause(timer, self):
@@ -409,7 +418,9 @@ def screen(self):
     dlg.selectNameFilter("Images (*.png *.jpg)")
     if dlg.exec_():
         pixmap.save(dlg.selectedFiles()[0])
-        popup = QtWidgets.QMessageBox().information(self, "Fichier sauvegardé", "L'image a été sauvegardé : " + dlg.selectedFiles()[0], QtWidgets.QMessageBox.Ok)
+        popup = QtWidgets.QMessageBox().information(self, "Fichier sauvegardé",
+                                                    "L'image a été sauvegardé : " + dlg.selectedFiles()[0],
+                                                    QtWidgets.QMessageBox.Ok)
 
 
 if __name__ == '__main__':
