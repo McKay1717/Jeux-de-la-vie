@@ -130,42 +130,49 @@ def regles(self):
             check1.setCheckState(2)
         else:
             check1.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check1.setCheckState(0)
         if dic['110'] == 1:
             check2.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check2.setCheckState(2)
         else:
             check2.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check2.setCheckState(0)
         if dic['101'] == 1:
             check3.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check3.setCheckState(2)
         else:
             check3.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check3.setCheckState(0)
         if dic['100'] == 1:
             check4.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check4.setCheckState(2)
         else:
             check4.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check4.setCheckState(0)
         if dic['011'] == 1:
             check5.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check5.setCheckState(2)
         else:
             check5.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check5.setCheckState(0)
         if dic['010'] == 1:
             check6.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check6.setCheckState(2)
         else:
             check6.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check6.setCheckState(0)
         if dic['001'] == 1:
             check7.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check7.setCheckState(2)
         else:
             check7.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
+            check7.setCheckState(0)
         if dic['000'] == 1:
             check8.setStyleSheet("QCheckBox::indicator {background-color: black}")
             check8.setCheckState(2)
         else:
             check8.setStyleSheet("QCheckBox::indicator {background-color: white; border: 1px solid}")
-
+            check8.setCheckState(0)
 
 def state(i, self):
     check = self.findChild(QtWidgets.QCheckBox, "check" + str(i))
@@ -225,7 +232,6 @@ def etape(self, timer, engine, matrix):
     total_exec = nb_exec
     current_exec += 1
 
-    print(isTime)
     if isTime:
         matrix = matrice(engine, 0, 1, matrix)
 
