@@ -186,12 +186,26 @@ def resizeMatrice():
     return matrix
 
 
-def matrice(engine, nb_exec, taille):
+def matrice(engine, nb_exec, code, matrix):
 
-    Line = []
-    matrix = []
-    cells = engine.getCellArray()
-    for i in range(nb_exec):
+    if code ==0:
+        Line = []
+        matrix = []
+        cells = engine.getCellArray()
+        for i in range(nb_exec):
+            for e in cells:
+                if e:
+                    Line.append(1)
+                else:
+                    Line.append(0)
+            matrix.append(Line)
+            Line = []
+            engine.tick()
+
+        return matrix
+    else:
+        Line = []
+        cells = engine.getCellArray()
         for e in cells:
             if e:
                 Line.append(1)
@@ -200,9 +214,7 @@ def matrice(engine, nb_exec, taille):
         matrix.append(Line)
         Line = []
         engine.tick()
-    print(matrix)
-
-    return matrix
+        return matrix
 
 
 def etape(self, timer, engine, matrix):
@@ -216,6 +228,10 @@ def etape(self, timer, engine, matrix):
     total_exec = nb_exec
     current_exec += 1
 
+    print(isTime)
+    if isTime:
+        matrix = matrice(engine, 0, 1, matrix)
+
     print('Exec total = ' + str(total_exec) + ' | current  = ' + str(current_exec) + ' | time = ' + str(time.time() - tStart))
 
     if isExec and current_exec >= total_exec:
@@ -225,6 +241,7 @@ def etape(self, timer, engine, matrix):
         del matrix
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(current_exec) + " itérations effectuées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
+        btn_screen.setEnabled(True)
         return
 
     if isTime and (time.time() - tStart) > nb_temps:
@@ -233,18 +250,27 @@ def etape(self, timer, engine, matrix):
         del matrix
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(nb_temps) + " secondes écoulées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
         btn_start.setEnabled(True)
+        btn_screen.setEnabled(True)
         return
 
     graphic = self.findChild(QtWidgets.QGraphicsView, "graphic")
     scene = QtWidgets.QGraphicsScene()
     img = QImage(len(matrix[0]), line-1, QImage.Format_Mono)
 
-    for i in range(line):
-        for j in range(len(matrix[i])):
-            if matrix[i][j] == 1:
-                img.setPixel(j, i, 0)
-            else:
-                img.setPixel(j, i, 1)
+    if isExec:
+        for i in range(line):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 1:
+                    img.setPixel(j, i, 0)
+                else:
+                    img.setPixel(j, i, 1)
+    if isTime:
+        for i in range(line):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] == 1:
+                    img.setPixel(j, i, 0)
+                else:
+                    img.setPixel(j, i, 1)
 
     pixmap = QPixmap(img)
     pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
@@ -273,9 +299,8 @@ def start(self):
         return
     resetvar()
     btn_start.setEnabled(False)
-    btn_pause = self.findChild(QtWidgets.QPushButton, "btn_pause")
     btn_pause.setEnabled(True)
-    check1 = self.findChild(QtWidgets.QCheckBox, "check1")
+    btn_screen.setEnabled(False)
     check2 = self.findChild(QtWidgets.QCheckBox, "check2")
     check3 = self.findChild(QtWidgets.QCheckBox, "check3")
     check4 = self.findChild(QtWidgets.QCheckBox, "check4")
@@ -303,7 +328,9 @@ def start(self):
     nb_temps = sp_temps.value()
 
     total_exec = nb_exec
-    matrix = matrice(engine, total_exec, sp_taille.value())
+    matrix = []
+    if isExec:
+        matrix = matrice(engine, total_exec,0,matrix)
 
     timer = QtCore.QTimer()
     timer.timeout.connect(lambda: etape(self, timer, engine, matrix))
