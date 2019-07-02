@@ -287,11 +287,9 @@ def etape(self, timer, engine, matrix):
 
     pixmap = QPixmap(img)
     pixmap_scaled = pixmap.scaled(graphic.width() - 5, graphic.height() - 5, QtCore.Qt.IgnoreAspectRatio)
-    cont = QtWidgets.QLabel()
-    cont.setScaledContents(1)
-    cont.setPixmap(pixmap_scaled)
-    scene.addWidget(cont)
-    graphic.setScene(scene)
+    img = QImage(pixmap_scaled.toImage().convertToFormat(QImage.Format_ARGB32_Premultiplied))
+    scene.setBackgroundBrush(img);
+    scene.setCacheMode(QtWidgets.QGraphicsView.CacheBackground)
     line = line + 1
 
 
