@@ -310,7 +310,7 @@ def start(self):
     sp_taille = self.findChild(QtWidgets.QSpinBox, "sp_taille")
     if (isTime == False and isExec == False) or sp_taille.value() == 0:
         popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",
-                                                    " Vous devez choisir un nombre d'éxécution ou une durée",
+                                                    " Vous devez choisir un nombre d'éxécution ou une durée ainsi qu'une taille de ligne",
                                                     QtWidgets.QMessageBox.Ok)
         return
     resetvar()
