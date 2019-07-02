@@ -1,4 +1,3 @@
-from __builtin__ import type
 from random import randint
 
 class CellArray:
@@ -6,6 +5,7 @@ class CellArray:
         # Main array of cell, true = white, false=black
         self.__cell_array = []
         self.__row_size = row_size
+        self._cursor = 0
         try:
             self.__InitArray(row_size)
         except Exception as v:
@@ -21,7 +21,7 @@ class CellArray:
 
     # Return the ID of current iteration
     def GetCurrentIterID(self):
-        return len(self.__cell_array)
+        return len(self.__cell_array)-1
 
     # Fill a line with True and return it
     def __InitLine(self):
@@ -47,6 +47,13 @@ class CellArray:
             raise e
         return current_cell
 
+    # Get the position of the cursor
+    def GetCursor(self):
+        if self.iterate:
+            return self.__x
+        else:
+           raise Exception("not currently iterate")
+
     # Set the boolean for the iterd_id at the postion y
     def SetCell(self, x, y, state):
         if type(state) != bool:
@@ -58,16 +65,21 @@ class CellArray:
 
     # Iterate over the line of the current iteration
     def __iter__(self):
-        self.__x = self.GetCurrentIterID()-1
+        self.__x = self.GetCurrentIterID()
         self.__y = 0
+        self.iterate = True
         return self
 
     def next(self):
+        return self.__next__()
+
+    def __next__(self):
         row_size = self.GetRowSize() - 1
 
         cell = self.GetCell(self.__x, self.__y)
         if self.__y == row_size:
             raise StopIteration
+            self.iterate = False
             return cell
         else:
             self.__y += 1
