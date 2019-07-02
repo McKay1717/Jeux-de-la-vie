@@ -255,6 +255,7 @@ def etape(self, timer, engine, matrix):
 
     if isTime and (time.time() - tStart) > nb_temps:
         timer.stop()
+        timer.disconnect()
         del timer
         del matrix
         form.setEnabled(True)
