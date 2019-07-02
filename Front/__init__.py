@@ -238,7 +238,8 @@ def etape(self, timer, engine, matrix):
 
     print('Exec total = ' + str(total_exec) + ' | current  = ' + str(current_exec) + ' | time = ' + str(
         time.time() - tStart))
-
+    lcd = self.findChild(QtWidgets.QLCDNumber,"lcdNumber")
+    lcd.display(time.time() - tStart)
     if isExec and current_exec >= total_exec:
         timer.stop()
         timer.disconnect()
