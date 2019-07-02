@@ -220,6 +220,7 @@ def etape(self, timer, engine, matrix):
 
     if isExec and current_exec >= total_exec:
         timer.stop()
+        timer.disconnect()
         del timer
         del matrix
         popup = QtWidgets.QMessageBox().information(self, "Fin de l'éxécution", str(current_exec) + " itérations effectuées. Simulation terminée.", QtWidgets.QMessageBox.Ok)
