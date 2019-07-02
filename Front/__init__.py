@@ -306,7 +306,7 @@ def resetvar():
 
 def start(self):
     form = self.findChild(QtWidgets.QFrame, "form")
-    form.setEnabled(False)
+
     sp_taille = self.findChild(QtWidgets.QSpinBox, "sp_taille")
     if (isTime == False and isExec == False) or sp_taille.value() == 0:
         popup = QtWidgets.QMessageBox().information(self, "Pas de paramètres",
@@ -317,6 +317,7 @@ def start(self):
     btn_start.setEnabled(False)
     btn_pause.setEnabled(True)
     btn_screen.setEnabled(False)
+    form.setEnabled(False)
     check2 = self.findChild(QtWidgets.QCheckBox, "check2")
     check3 = self.findChild(QtWidgets.QCheckBox, "check3")
     check4 = self.findChild(QtWidgets.QCheckBox, "check4")
